@@ -19,42 +19,32 @@ const News = (props)=>{
 
     const updateNews = async ()=> {
         props.setProgress(10);
-        try{
-            const url="https://1c316fb8-bdaf-4380-bd1e-9749497aec61.mock.pstmn.io/apiCalling"
-            // const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`; 
+        
+            // const url="https://1c316fb8-bdaf-4380-bd1e-9749497aec61.mock.pstmn.io/apiCalling"
+            const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`; 
             setLoading(true)
             let data = await fetch(url);
-            props.setProgress(30);
-            let parsedData = await data.json()
-            props.setProgress(70);
-            setArticles(parsedData.articles)
-            setTotalResults(parsedData.totalResults)
-            console.log("hii")
-        }
-        catch (error) {
-              console.log(error)
-            
-            if (error.response && error.response.status === 429) {
-              // API limit reached
-              setApiLimitReached(true);
-              toast.error('API limit reached. Please try again later.');
-              console.log("we are in if")
-            } else {
-              // Handle other errors
-              setApiLimitReached(true);
-              toast.error('API limit reached. Please try again later.');
-              toast.error('An error occurred. Please try again later.');
-              console.log("we are in else")
-            //   console.log(error.response)
-            //   console.log(error.response.status)
+            if(!data.ok){
+                if(data.status === 429){
+                    toast.error("Too Many Request!! News can not be retrieved currently");
+                }
+                else{
+                    toast.error("Status code:" + data.status+ "," + data.statusText)
+                }
+            }else{
+                props.setProgress(30)
+                let parsedData= await data.json()
+                props.setProgress(70)
+                setArticles(parsedData.articles)
+                setTotalResults(parsedData.totalResults)
+                setLoading(false)
+                props.setProgress(100)
+                toast.success("Job Done")
+                console.log("hii")
             }
 
-          }
-        finally{
-            setLoading(false)
-            props.setProgress(100);
-        }  
-    }
+          } 
+    
 
     useEffect(() => {
         document.title = `${capitalizeFirstLetter(props.category)} - NewsMonkey`;
@@ -106,11 +96,11 @@ const News = (props)=>{
                     </div>
                     </div> 
                 </InfiniteScroll>
-
+                <ToastContainer/>
             </>
         )
     
-}
+        }
 
 
 News.defaultProps = {
