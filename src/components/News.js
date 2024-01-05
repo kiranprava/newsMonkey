@@ -12,7 +12,9 @@ const News = (props)=>{
     const [page, setPage] = useState(1)
     const [totalResults, setTotalResults] = useState(0)
     const [apiLimitReached, setApiLimitReached] = useState(false);
+    const [newsUpdated, setNewsUpdated]= useState(false);
     
+
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     } 
@@ -39,18 +41,21 @@ const News = (props)=>{
                 setTotalResults(parsedData.totalResults)
                 setLoading(false)
                 props.setProgress(100)
-                toast.success("Job Done")
-                console.log("hii")
+                setNewsUpdated(true)
+                }
             }
-
-          } 
-    
 
     useEffect(() => {
         document.title = `${capitalizeFirstLetter(props.category)} - NewsMonkey`;
         updateNews(); 
         // eslint-disable-next-line 
     }, [])
+    useEffect(() => {
+        if(newsUpdated) {
+            toast.success("Job Done")
+        }
+    }, [newsUpdated])
+ 
  
 
     // const handlePrevClick = async () => {
@@ -73,6 +78,7 @@ const News = (props)=>{
         if(apiLimitReached){
             toast.error('API limit reached..')
         }
+        setNewsUpdated(true);
       };
  
         return (
