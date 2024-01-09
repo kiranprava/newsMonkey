@@ -53,6 +53,7 @@ const News = (props)=>{
     useEffect(() => {
         if(newsUpdated) {
             toast.success("Job Done")
+            console.log("hi")
         }
     }, [newsUpdated])
  
